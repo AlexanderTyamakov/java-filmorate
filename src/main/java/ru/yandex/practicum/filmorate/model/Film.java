@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -24,6 +25,7 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive(message = "Duration of the film can not be negative or zero")
     private final int duration;
+    @JsonIgnore
     private Set<Integer> usersLikes;
 
     public void addUserLike(int userId) {

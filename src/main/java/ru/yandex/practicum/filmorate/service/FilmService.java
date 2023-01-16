@@ -7,11 +7,13 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,7 +36,7 @@ public class FilmService {
 
     public Film update(Film film) {
         validate(film);
-        if (filmStorage.getIds().contains(film.getId())) {
+        if (getIds().contains(film.getId())) {
             filmStorage.replace(film);
             log.info("Фильм обновлен в коллекции");
         } else {
@@ -49,8 +51,8 @@ public class FilmService {
         return filmStorage.getValues();
     }
 
-    public Film getById (Integer filmId) {
-        if (!filmStorage.getIds().contains(filmId)) {
+    public Film getById(Integer filmId) {
+        if (!getIds().contains(filmId)) {
             log.error("Фильм в коллекции не найден");
             throw new FilmNotFoundException("Ошибка при поиске: фильм id = " + filmId + " не найден");
         }
@@ -58,9 +60,10 @@ public class FilmService {
     }
 
     public Film addUserLike(int filmId, int userId) {
-        if (filmStorage.getIds().contains(filmId)) {
-            if (userStorage.getIds().contains(userId)) {
-                return filmStorage.addUserLike(filmId, userId);
+        if (getIds().contains(filmId)) {
+            if (getUsersIds().contains(userId)) {
+                filmStorage.getById(filmId).addUserLike(userId);
+                return filmStorage.getById(filmId);
             } else {
                 log.error("Пользователь в коллекции не найден");
                 throw new UserNotFoundException("Ошибка при добавлении лайка: пользователь c id = " + userId + " не найден");
@@ -72,9 +75,10 @@ public class FilmService {
     }
 
     public Film deleteUserLike(int filmId, int userId) {
-        if (filmStorage.getIds().contains(filmId)) {
-            if (userStorage.getIds().contains(userId)) {
-                return filmStorage.deleteUserLike(filmId, userId);
+        if (getIds().contains(filmId)) {
+            if (getUsersIds().contains(userId)) {
+                filmStorage.getById(filmId).deleteUserLike(userId);
+                return filmStorage.getById(filmId);
             } else {
                 log.error("Пользователь в коллекции не найден");
                 throw new UserNotFoundException("Ошибка при удалении лайка: пользователь c id = " + userId + " не найден");
@@ -86,8 +90,13 @@ public class FilmService {
     }
 
     public Collection<Film> returnPopularFilms(Integer size) {
-        if (size == null) {size = 10;}
-        return filmStorage.getTopRatedFilms(size);
+        if (size == null) {
+            size = 10;
+        }
+        return filmStorage.getValues().stream()
+                .sorted(this::compare)
+                .limit(size)
+                .collect(Collectors.toSet());
     }
 
     public void validate(Film film) {
@@ -97,4 +106,19 @@ public class FilmService {
         }
     }
 
+    private Collection<Integer> getIds() {
+        return filmStorage.getValues().stream()
+                .map(Film::getId)
+                .collect(Collectors.toList());
+    }
+
+    private Collection<Integer> getUsersIds() {
+        return userStorage.getValues().stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+    }
+
+    private int compare(Film f0, Film f1) {
+        return -1 * Integer.compare(f0.getUsersLikes().size(), f1.getUsersLikes().size());
+    }
 }

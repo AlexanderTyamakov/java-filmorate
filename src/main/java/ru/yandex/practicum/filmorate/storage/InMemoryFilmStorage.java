@@ -44,11 +44,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Integer> getIds() {
-        return films.keySet();
-    }
-
-    @Override
     public Collection<Film> getValues() {
         return films.values()
                 .stream()
@@ -56,28 +51,8 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public Film addUserLike(int filmId, int userId) {
-        films.get(filmId).addUserLike(userId);
-        return films.get(filmId);
-    }
-
-    @Override
-    public Film deleteUserLike(int filmId, int userId) {
-        films.get(filmId).deleteUserLike(userId);
-        return films.get(filmId);
-    }
-
-    @Override
-    public Collection<Film> getTopRatedFilms(int size) {
-        return films.values().stream()
-                .sorted(this::compare)
-                .limit(size)
-                .collect(Collectors.toSet());
-    }
-
     private int compare(Film f0, Film f1) {
-        return -1 * Integer.compare(f0.getUsersLikes().size(), f1.getUsersLikes().size());
+        return Integer.compare(f0.getId(), f1.getId());
     }
 }
 
