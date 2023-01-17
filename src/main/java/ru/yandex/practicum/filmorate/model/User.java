@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.validation.constraints.*;
@@ -20,5 +22,13 @@ public class User {
     private String name;
     @PastOrPresent(message = "Birthday can not be in the future")
     private final LocalDate birthday;
+    @JsonIgnore
+    private Set<Integer> friends;
 
+    public void addFriends(int id) {
+        this.friends.add(id);
+    }
+    public void deleteFriends(int id) {
+        this.friends.remove(id);
+    }
 }
