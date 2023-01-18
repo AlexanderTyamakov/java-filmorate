@@ -3,21 +3,21 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> users = new HashMap<>();
+public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implements UserStorage {
     private int id = 1;
 
     @Override
     public User add(User user) {
         user.setId(id);
         user.setFriends(new HashSet<>());
-        users.put(id, user);
+        storage.put(id, user);
         id++;
         return user;
     }
@@ -25,24 +25,24 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User replace(User user) {
         user.setFriends(new HashSet<>());
-        users.replace(user.getId(), user);
+        storage.replace(user.getId(), user);
         return user;
     }
 
     @Override
     public User delete(User user) {
-        users.remove(user.getId());
+        storage.remove(user.getId());
         return user;
     }
 
     @Override
-    public User getById(int id) {
-        return users.get(id);
+    public User getById(Integer id) {
+        return storage.get(id);
     }
 
     @Override
     public Collection<User> getValues() {
-        return users.values()
+        return storage.values()
                 .stream()
                 .sorted(this::compare)
                 .collect(Collectors.toList());

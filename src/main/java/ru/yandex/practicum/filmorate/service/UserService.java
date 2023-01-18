@@ -2,12 +2,13 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.FriendshipStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.Collection;
 import java.util.Set;
@@ -16,11 +17,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserService {
-    private final UserStorage userStorage;
+    private UserStorage userStorage;
+    private FriendshipStorage friendshipStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, FriendshipStorage friendshipStorage) {
         this.userStorage = userStorage;
+        this.friendshipStorage = friendshipStorage;
     }
 
 
@@ -46,7 +49,9 @@ public class UserService {
 
     public Collection<User> findAll() {
         log.info("Возвращен список пользователей");
-        return userStorage.getValues();
+        Collection<User> users = userStorage.getValues();
+        users.forEach(friendshipStorage::loadFriends);
+        return users;
     }
 
     public User getById (Integer userId) {
@@ -54,14 +59,24 @@ public class UserService {
             log.error("Пользователь в коллекции не найден");
             throw new UserNotFoundException("Ошибка при поиске: пользователь id = " + userId + " не найден");
         }
-        return userStorage.getById(userId);
+        User user = userStorage.getById(userId);
+        friendshipStorage.loadFriends(user);
+        return user;
     }
 
     public User addFriend(Integer userId1, Integer userId2) {
         if (getIds().contains(userId1)) {
             if (getIds().contains(userId2)) {
+                if (userStorage.getById(userId1).containsFriend(userId2)) {
+                    log.error("Пользователь уже есть в друзьях");
+                    return userStorage.getById(userId1);
+                }
                 userStorage.getById(userId1).addFriends(userId2);
-                userStorage.getById(userId2).addFriends(userId1);
+                if (friendshipStorage.containsFriendship(userId2, userId1, false)) {
+                    friendshipStorage.updateFriendship(userId2, userId1, true, userId2, userId1);
+                } else if (!friendshipStorage.containsFriendship(userId1, userId2, null)){
+                    friendshipStorage.insertFriendship(userId1, userId2);
+                }
                 return userStorage.getById(userId1);
             } else {
                 log.error("Пользователь в коллекции не найден");
@@ -77,7 +92,13 @@ public class UserService {
         if (getIds().contains(userId1)) {
             if (getIds().contains(userId2)) {
                 userStorage.getById(userId1).deleteFriends(userId2);
-                userStorage.getById(userId2).deleteFriends(userId1);
+                if (friendshipStorage.containsFriendship(userId1, userId2, false)) {
+                    friendshipStorage.removeFriendship(userId1, userId2);
+                } else if (friendshipStorage.containsFriendship(userId1, userId2, true)) {
+                    friendshipStorage.updateFriendship(userId2, userId1, false, userId1, userId2);
+                } else if (friendshipStorage.containsFriendship(userId2, userId1, true)) {
+                    friendshipStorage.updateFriendship(userId2, userId1, false, userId2, userId1);
+                }
                 return userStorage.getById(userId1);
             } else {
                 log.error("Пользователь в коллекции не найден");

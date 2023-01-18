@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -15,13 +15,13 @@ public class User {
     @NotNull(message = "Email can not be null")
     @NotBlank(message = "Email can not be blank")
     @Email(message = "Email is not valid")
-    private final String email;
+    private String email;
     @NotNull(message = "Login can not be null")
     @NotBlank(message = "Login can not be blank")
-    private final String login;
+    private String login;
     private String name;
     @PastOrPresent(message = "Birthday can not be in the future")
-    private final LocalDate birthday;
+    private LocalDate birthday;
     @JsonIgnore
     private Set<Integer> friends;
 
@@ -30,5 +30,11 @@ public class User {
     }
     public void deleteFriends(int id) {
         this.friends.remove(id);
+    }
+    public List<Integer> getFiends() {
+        return new ArrayList<>(friends);
+    }
+    public boolean containsFriend(Integer id){
+        return friends.contains(id);
     }
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.interfaces;
 
 import java.util.Collection;
 
@@ -10,7 +10,7 @@ public interface Storage<T> {
 
     T delete(T obj);
 
-    T getById(int id);
+    T getById(Integer id);
 
     Collection<T> getValues();
 }

@@ -2,17 +2,18 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,16 +21,26 @@ import java.util.stream.Collectors;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final FilmsLikesStorage filmsLikesStorage;
+    private final FilmsGenreStorage filmsGenreStorage;
+
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage,
+                       UserStorage userStorage,
+                       FilmsLikesStorage filmsLikesStorage,
+                       FilmsGenreStorage filmsGenreStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.filmsLikesStorage = filmsLikesStorage;
+        this.filmsGenreStorage = filmsGenreStorage;
     }
 
     public Film create(Film film) {
         validate(film);
         filmStorage.add(film);
+        filmsLikesStorage.saveLikes(film);
+        filmsGenreStorage.saveGenre(film);
         log.info("Фильм добавлен в коллекцию");
         return film;
     }
@@ -38,6 +49,8 @@ public class FilmService {
         validate(film);
         if (getIds().contains(film.getId())) {
             filmStorage.replace(film);
+            filmsLikesStorage.saveLikes(film);
+            filmsGenreStorage.saveGenre(film);
             log.info("Фильм обновлен в коллекции");
         } else {
             log.error("Фильм в коллекции не найден");
@@ -48,7 +61,9 @@ public class FilmService {
 
     public Collection<Film> findAll() {
         log.info("Возвращен список фильмов");
-        return filmStorage.getValues();
+        Collection<Film> films = filmStorage.getValues();
+        films.forEach(this::loadData);
+        return films;
     }
 
     public Film getById(Integer filmId) {
@@ -56,13 +71,16 @@ public class FilmService {
             log.error("Фильм в коллекции не найден");
             throw new FilmNotFoundException("Ошибка при поиске: фильм id = " + filmId + " не найден");
         }
-        return filmStorage.getById(filmId);
+        Film film = filmStorage.getById(filmId);
+        loadData(film);
+        return film;
     }
 
     public Film addUserLike(int filmId, int userId) {
         if (getIds().contains(filmId)) {
             if (getUsersIds().contains(userId)) {
                 filmStorage.getById(filmId).addUserLike(userId);
+                filmsLikesStorage.saveLikes(filmStorage.getById(filmId));
                 return filmStorage.getById(filmId);
             } else {
                 log.error("Пользователь в коллекции не найден");
@@ -78,6 +96,7 @@ public class FilmService {
         if (getIds().contains(filmId)) {
             if (getUsersIds().contains(userId)) {
                 filmStorage.getById(filmId).deleteUserLike(userId);
+                filmsLikesStorage.saveLikes(filmStorage.getById(filmId));
                 return filmStorage.getById(filmId);
             } else {
                 log.error("Пользователь в коллекции не найден");
@@ -93,7 +112,9 @@ public class FilmService {
         if (size == null) {
             size = 10;
         }
-        return filmStorage.getValues().stream()
+        Collection<Film> films = filmStorage.getValues();
+        films.forEach(this::loadData);
+        return films.stream()
                 .sorted(this::compare)
                 .limit(size)
                 .collect(Collectors.toSet());
@@ -120,5 +141,10 @@ public class FilmService {
 
     private int compare(Film f0, Film f1) {
         return -1 * Integer.compare(f0.getUsersLikes().size(), f1.getUsersLikes().size());
+    }
+
+    private void loadData(Film film) {
+        filmsLikesStorage.loadLikes(film);
+        filmsGenreStorage.loadGenre(film);
     }
 }
