@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class RatingService {
 
-    private  RatingStorage ratingStorage;
+    private final RatingStorage ratingStorage;
 
     @Autowired
     public RatingService(@Qualifier("RatingDbStorage")RatingStorage ratingStorage) {

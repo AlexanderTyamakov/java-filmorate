@@ -21,7 +21,7 @@ import java.util.Collection;
 @RestController
 public class GenreContoller {
 
-    private  GenreService genreService;
+    private final GenreService genreService;
 
     @Autowired
     public GenreContoller (GenreService genreService) {

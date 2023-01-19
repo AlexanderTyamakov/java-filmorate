@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FilmService {
-    private  FilmDStorage filmStorage;
-    private  UserStorage userStorage;
-    private  GenreStorage genreStorage;
+    private final FilmDStorage filmStorage;
+    private final UserStorage userStorage;
+    private final GenreStorage genreStorage;
 
 
     @Autowired
@@ -58,12 +58,12 @@ public class FilmService {
         return getById(film.getId());
     }
 
-    public Collection<Film> findAll() {
-        log.info("Возвращен список фильмов");
-        Collection<Film> films = filmStorage.getValues();
-        films.forEach(this::loadData);
-        return films;
-    }
+        public Collection<Film> findAll() {
+            log.info("Возвращен список фильмов");
+            Collection<Film> films = filmStorage.getValues();
+            films.forEach(this::loadData);
+            return films;
+        }
 
     public Film getById(Integer filmId) {
         if (!getIds().contains(filmId)) {

@@ -22,7 +22,7 @@ import java.util.Collection;
     @RestController
     public class RatingController {
 
-        private  RatingService ratingService;
+        private final RatingService ratingService;
 
         @Autowired
         public RatingController (RatingService ratingService) {
