@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmsGenreStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmsLikesStorage;
 
+import java.util.List;
 import java.util.Set;
 
 @Component
@@ -25,22 +26,21 @@ public class FilmsGenreDbStorage implements FilmsGenreStorage {
 
     @Override
     public void saveGenre(Film film) {
+        jdbcTemplate.update("DELETE FROM FILMS_GENRES WHERE FILM_ID = ?", film.getId());
         String sql = "INSERT INTO FILMS_GENRES (FILM_ID, GENRE_ID) VALUES(?, ?)";
-        Set<Integer> genres = film.getGenres();
+        Set<Genre> genres = film.getGenres();
         if (genres == null) {
             return;
         }
-        for (Integer genre : genres) {
-            jdbcTemplate.update(sql, film.getId(), genre);
+        for (var genre : genres) {
+            jdbcTemplate.update(sql, film.getId(), genre.getId());
         }
     }
 
     @Override
-    public void loadGenre(Film film) {
-        String sql = "SELECT GENRE_ID FROM FILMS_GENRES WHERE FILM_ID = ?";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
-        while (sqlRowSet.next()) {
-            film.addGenre(sqlRowSet.getInt("USER_ID"));
-        }
+    public void deleteGenre(Film film) {
+        String sql = "DELETE FROM FILMS_GENRES WHERE FILM_ID = ?";
+        jdbcTemplate.update(sql, film.getId());
+        saveGenre(film);
     }
 }

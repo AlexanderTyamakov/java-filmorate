@@ -16,7 +16,6 @@ public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implement
     @Override
     public User add(User user) {
         user.setId(id);
-        user.setFriends(new HashSet<>());
         storage.put(id, user);
         id++;
         return user;
@@ -24,7 +23,6 @@ public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implement
 
     @Override
     public User replace(User user) {
-        user.setFriends(new HashSet<>());
         storage.replace(user.getId(), user);
         return user;
     }

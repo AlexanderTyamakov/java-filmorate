@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -12,7 +15,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class Film {
 
     private Integer id;
@@ -24,23 +29,44 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Duration of the film can not be negative or zero")
     private int duration;
-    @JsonIgnore
-    private Set<Integer> usersLikes = new HashSet<>();
-    @NotNull
-    private Rating rating;
-    private Set<Integer> genres;
+    private Rating mpa;
+    @Setter(AccessLevel.NONE)
+    private Set<Genre> genres = new HashSet<>();
 
+    @Setter(AccessLevel.NONE)
+    private Set<Integer> usersLikes = new HashSet<>();
     public void addUserLike(int userId) {
-        this.usersLikes.add(userId);
+        usersLikes.add(userId);
     }
 
-    public void addGenre (Integer id) {
-        this.genres.add(id);
+    public void addGenre(Genre genre) {
+        genres.add(genre);
+    }
+    public void clearGenre() {
+        genres.clear();
     }
     public void deleteUserLike(int userId) {
-        this.usersLikes.remove(userId);
+        usersLikes.remove(userId);
     }
     public int getLikesCount() {
         return usersLikes.size();
+    }
+
+    private int compare(Genre g0, Genre g1) {
+        return Integer.compare(g0.getId(), g1.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Film{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", releaseDate=" + releaseDate +
+                ", duration=" + duration +
+                ", mpa=" + mpa +
+                ", genres=" + genres.stream().sorted(this::compare).collect(Collectors.toList()) +
+                ", usersLikes=" + usersLikes +
+                '}';
     }
 }

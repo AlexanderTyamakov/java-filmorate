@@ -24,16 +24,20 @@ public class FilmService {
     private final FilmsLikesStorage filmsLikesStorage;
     private final FilmsGenreStorage filmsGenreStorage;
 
+    private final GenreStorage genreStorage;
+
 
     @Autowired
     public FilmService(FilmStorage filmStorage,
                        UserStorage userStorage,
                        FilmsLikesStorage filmsLikesStorage,
-                       FilmsGenreStorage filmsGenreStorage) {
+                       FilmsGenreStorage filmsGenreStorage,
+                       GenreStorage genreStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.filmsLikesStorage = filmsLikesStorage;
         this.filmsGenreStorage = filmsGenreStorage;
+        this.genreStorage = genreStorage;
     }
 
     public Film create(Film film) {
@@ -79,9 +83,10 @@ public class FilmService {
     public Film addUserLike(int filmId, int userId) {
         if (getIds().contains(filmId)) {
             if (getUsersIds().contains(userId)) {
-                filmStorage.getById(filmId).addUserLike(userId);
-                filmsLikesStorage.saveLikes(filmStorage.getById(filmId));
-                return filmStorage.getById(filmId);
+                Film film = filmStorage.getById(filmId);
+                film.addUserLike(userId);
+                filmsLikesStorage.saveLikes(film);
+                return film;
             } else {
                 log.error("Пользователь в коллекции не найден");
                 throw new UserNotFoundException("Ошибка при добавлении лайка: пользователь c id = " + userId + " не найден");
@@ -95,9 +100,10 @@ public class FilmService {
     public Film deleteUserLike(int filmId, int userId) {
         if (getIds().contains(filmId)) {
             if (getUsersIds().contains(userId)) {
-                filmStorage.getById(filmId).deleteUserLike(userId);
-                filmsLikesStorage.saveLikes(filmStorage.getById(filmId));
-                return filmStorage.getById(filmId);
+                Film film = filmStorage.getById(filmId);
+                film.deleteUserLike(userId);
+                filmsLikesStorage.saveLikes(film);
+                return film;
             } else {
                 log.error("Пользователь в коллекции не найден");
                 throw new UserNotFoundException("Ошибка при удалении лайка: пользователь c id = " + userId + " не найден");
@@ -145,6 +151,6 @@ public class FilmService {
 
     private void loadData(Film film) {
         filmsLikesStorage.loadLikes(film);
-        filmsGenreStorage.loadGenre(film);
+        genreStorage.loadGenre(film);
     }
 }

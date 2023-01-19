@@ -32,6 +32,7 @@ public class FilmsLikesDbStorage implements FilmsLikesStorage {
         }
     }
 
+
     @Override
     public void loadLikes(Film film) {
         String sql = "SELECT USER_ID FROM FILMS_LIKES WHERE FILM_ID = ?";

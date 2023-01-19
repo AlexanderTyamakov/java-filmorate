@@ -71,13 +71,14 @@ public class UserService {
                     log.error("Пользователь уже есть в друзьях");
                     return userStorage.getById(userId1);
                 }
-                userStorage.getById(userId1).addFriends(userId2);
                 if (friendshipStorage.containsFriendship(userId2, userId1, false)) {
                     friendshipStorage.updateFriendship(userId2, userId1, true, userId2, userId1);
                 } else if (!friendshipStorage.containsFriendship(userId1, userId2, null)){
                     friendshipStorage.insertFriendship(userId1, userId2);
                 }
-                return userStorage.getById(userId1);
+                User user = userStorage.getById(userId1);
+                friendshipStorage.loadFriends(user);
+                return user;
             } else {
                 log.error("Пользователь в коллекции не найден");
                 throw new UserNotFoundException("Ошибка при добавлении в друзья: пользователь c id = " + userId2 + " не найден");
@@ -99,6 +100,8 @@ public class UserService {
                 } else if (friendshipStorage.containsFriendship(userId2, userId1, true)) {
                     friendshipStorage.updateFriendship(userId2, userId1, false, userId2, userId1);
                 }
+                User user = userStorage.getById(userId1);
+                friendshipStorage.loadFriends(user);
                 return userStorage.getById(userId1);
             } else {
                 log.error("Пользователь в коллекции не найден");
@@ -112,7 +115,9 @@ public class UserService {
 
     public Collection<User> returnFriendCollection(Integer userId) {
         if (getIds().contains(userId)) {
-            Set<Integer> temp = userStorage.getById(userId).getFriends();
+            User user = userStorage.getById(userId);
+            friendshipStorage.loadFriends(user);
+            Set<Integer> temp = user.getFriends();
             return userStorage.getValues().stream()
                     .filter(x -> temp.contains(x.getId()))
                     .sorted(this::compare)
@@ -126,9 +131,13 @@ public class UserService {
     public Collection<User> returnCommonFriends(Integer userId1, Integer userId2) {
         if (getIds().contains(userId1)) {
             if (getIds().contains(userId2)) {
-                Set<Integer> temp =  userStorage.getById(userId1).getFriends()
+                User user1 = userStorage.getById(userId1);
+                friendshipStorage.loadFriends(user1);
+                User user2 = userStorage.getById(userId2);
+                friendshipStorage.loadFriends(user2);
+                Set<Integer> temp =  user1.getFriends()
                         .stream()
-                        .filter(userStorage.getById(userId2).getFriends()::contains)
+                        .filter(user2.getFriends()::contains)
                         .collect(Collectors.toSet());
 
                 return userStorage.getValues().stream()

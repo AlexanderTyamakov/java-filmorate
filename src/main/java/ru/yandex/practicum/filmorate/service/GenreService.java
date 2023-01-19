@@ -1,8 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exception.RatingNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.interfaces.GenreStorage;
 
 import java.util.Collection;
@@ -10,7 +14,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 public class GenreService {
 
@@ -26,6 +30,18 @@ public class GenreService {
     }
 
     public Genre getGenreById(Integer id) {
-        return genreStorage.getById(id);
+        if (!getIds().contains(id)) {
+            log.error("Рейтинг в коллекции не найден");
+            throw new GenreNotFoundException("Ошибка при поиске: жанр id = " + id + " не найден");
+        }
+        else {
+            return genreStorage.getById(id);
+        }
+    }
+
+    private Collection<Integer> getIds() {
+        return genreStorage.getValues().stream()
+                .map(Genre::getId)
+                .collect(Collectors.toList());
     }
 }

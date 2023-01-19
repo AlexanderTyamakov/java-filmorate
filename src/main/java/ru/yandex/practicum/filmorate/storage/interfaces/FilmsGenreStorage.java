@@ -6,5 +6,5 @@ public interface FilmsGenreStorage {
 
     void saveGenre(Film film);
 
-    void loadGenre(Film film);
+    void deleteGenre(Film film);
 }

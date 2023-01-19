@@ -5,12 +5,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.interfaces.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -70,5 +72,16 @@ public class GenreDbStorage implements GenreStorage {
     public Collection<Genre> getValues() {
         String sql = "SELECT * FROM GENRES ORDER BY GENRE_ID";
         return jdbcTemplate.query(sql, this::mapToGenre);
+    }
+
+
+    @Override
+    public void loadGenre(Film film) {
+        String sql = "SELECT g.GENRE_ID, g.NAME FROM FILMS_GENRES fg JOIN GENRES g ON fg.GENRE_ID = g.GENRE_ID " +
+                " WHERE fg.FILM_ID = ?";
+        Collection<Genre> genres =  jdbcTemplate.query(sql, this::mapToGenre, film.getId());
+        for (Genre genre:genres) {
+            film.addGenre(genre);
+        }
     }
 }

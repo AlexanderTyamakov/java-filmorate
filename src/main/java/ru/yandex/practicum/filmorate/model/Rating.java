@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class Rating {
     private Integer id;
     private String name;
@@ -21,5 +23,7 @@ public class Rating {
         this.name = "";
     }
 
-
+    public Integer getId() {
+        return id;
+    }
 }

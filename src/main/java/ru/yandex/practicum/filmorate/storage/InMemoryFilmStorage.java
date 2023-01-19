@@ -17,7 +17,6 @@ public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implement
     @Override
     public Film add(Film film) {
         film.setId(id);
-        film.setUsersLikes(new HashSet<>());
         storage.put(id, film);
         id++;
         return film;
@@ -25,7 +24,6 @@ public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implement
 
     @Override
     public Film replace(Film film) {
-        film.setUsersLikes(new HashSet<>());
         storage.replace(film.getId(), film);
         return film;
     }

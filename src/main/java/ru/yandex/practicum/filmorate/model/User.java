@@ -8,7 +8,10 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
 public class User {
 
     private int id;
@@ -22,18 +25,16 @@ public class User {
     private String name;
     @PastOrPresent(message = "Birthday can not be in the future")
     private LocalDate birthday;
-    @JsonIgnore
-    private Set<Integer> friends;
+    @Setter(AccessLevel.NONE)
+    private Set<Integer> friends = new HashSet<>();
 
     public void addFriends(int id) {
-        this.friends.add(id);
+        friends.add(id);
     }
     public void deleteFriends(int id) {
         this.friends.remove(id);
     }
-    public List<Integer> getFiends() {
-        return new ArrayList<>(friends);
-    }
+
     public boolean containsFriend(Integer id){
         return friends.contains(id);
     }
