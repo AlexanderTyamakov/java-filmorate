@@ -11,10 +11,10 @@ import ru.yandex.practicum.filmorate.storage.database.interfaces.RatingStorage;
 import java.util.Collection;
 import java.util.stream.Collectors;
 @Slf4j
-@Service("RatingService")
+@Service
 public class RatingService {
 
-    private final RatingStorage ratingStorage;
+    private  RatingStorage ratingStorage;
 
     @Autowired
     public RatingService(@Qualifier("RatingDbStorage")RatingStorage ratingStorage) {

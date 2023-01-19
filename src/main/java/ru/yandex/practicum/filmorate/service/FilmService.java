@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,11 +19,11 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service("FilmService")
+@Service
 public class FilmService {
-    private final FilmDStorage filmStorage;
-    private final UserStorage userStorage;
-    private final GenreStorage genreStorage;
+    private  FilmDStorage filmStorage;
+    private  UserStorage userStorage;
+    private  GenreStorage genreStorage;
 
 
     @Autowired

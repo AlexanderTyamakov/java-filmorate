@@ -21,10 +21,10 @@ import java.util.Collection;
 @RestController
 public class GenreContoller {
 
-    private final GenreService genreService;
+    private  GenreService genreService;
 
     @Autowired
-    public GenreContoller (@Qualifier("GenreService")GenreService genreService) {
+    public GenreContoller (GenreService genreService) {
         this.genreService = genreService;
     }
 

@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.database.interfaces.UserDStorage;
 
+import javax.validation.constraints.Size;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Size
 @Component("UserDbStorage")
-@Primary
 public class UserDbStorage extends AbstractDbStorage<User> implements UserDStorage {
 
     private final JdbcTemplate jdbcTemplate;

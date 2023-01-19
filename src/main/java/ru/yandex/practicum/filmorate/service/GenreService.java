@@ -11,10 +11,10 @@ import ru.yandex.practicum.filmorate.storage.database.interfaces.GenreStorage;
 import java.util.Collection;
 import java.util.stream.Collectors;
 @Slf4j
-@Service("GenreService")
+@Service
 public class GenreService {
 
-    private final GenreStorage genreStorage;
+    private  GenreStorage genreStorage;
 
     @Autowired
     public GenreService(@Qualifier("GenreDbStorage")GenreStorage genreStorage) {

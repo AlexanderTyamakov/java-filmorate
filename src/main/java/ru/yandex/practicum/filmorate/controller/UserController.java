@@ -19,10 +19,10 @@ import java.util.*;
 @RestController
 public class UserController {
 
-    private final UserService userService;
+    private  UserService userService;
 
     @Autowired
-    public UserController (@Qualifier("UserService")UserService userService) {
+    public UserController (UserService userService) {
         this.userService = userService;
     }
 

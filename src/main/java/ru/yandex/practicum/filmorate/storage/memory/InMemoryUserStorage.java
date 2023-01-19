@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.memory.interfaces.UserStorage;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component("InMemoryUserStorage")
 public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implements UserStorage {
 

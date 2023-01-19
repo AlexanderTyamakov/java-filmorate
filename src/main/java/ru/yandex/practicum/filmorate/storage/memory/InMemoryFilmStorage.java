@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component("InMemoryFilmStorage")
 public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implements FilmStorage {
 

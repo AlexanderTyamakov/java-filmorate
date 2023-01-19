@@ -22,10 +22,10 @@ import java.util.Collection;
     @RestController
     public class RatingController {
 
-        private final RatingService ratingService;
+        private  RatingService ratingService;
 
         @Autowired
-        public RatingController (@Qualifier("RatingService")RatingService ratingService) {
+        public RatingController (RatingService ratingService) {
             this.ratingService = ratingService;
         }
 
