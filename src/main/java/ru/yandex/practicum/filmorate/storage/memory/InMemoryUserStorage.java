@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+@Component("InMemoryUserStorage")
 public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implements UserStorage {
 
     final Map<Integer, User> storage = new HashMap<>();

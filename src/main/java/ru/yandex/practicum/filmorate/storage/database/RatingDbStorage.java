@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Component("RatingDbStorage")
 public class RatingDbStorage extends AbstractDbStorage<Rating> implements RatingStorage {
     private final JdbcTemplate jdbcTemplate;
 

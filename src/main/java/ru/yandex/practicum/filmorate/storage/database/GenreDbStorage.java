@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 
-@Component
+@Component("GenreDbStorage")
 public class GenreDbStorage extends AbstractDbStorage<Genre> implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 

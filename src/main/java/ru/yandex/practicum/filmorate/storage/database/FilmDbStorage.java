@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-@Component
+@Component("FilmDbStorage")
 @Primary
 @Slf4j
 public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmDStorage {

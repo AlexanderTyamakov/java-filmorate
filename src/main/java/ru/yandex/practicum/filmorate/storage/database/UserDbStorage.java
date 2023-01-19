@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Component("UserDbStorage")
 @Primary
 public class UserDbStorage extends AbstractDbStorage<User> implements UserDStorage {
 
