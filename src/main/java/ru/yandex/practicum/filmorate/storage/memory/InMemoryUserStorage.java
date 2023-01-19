@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.memory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
+import ru.yandex.practicum.filmorate.storage.memory.interfaces.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implements UserStorage {
+
+    final Map<Integer, User> storage = new HashMap<>();
     private int id = 1;
 
     @Override

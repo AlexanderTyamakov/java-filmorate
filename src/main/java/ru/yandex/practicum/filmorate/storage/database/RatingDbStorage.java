@@ -1,12 +1,11 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.database;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Rating;
-import ru.yandex.practicum.filmorate.storage.interfaces.RatingStorage;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.RatingStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class RatingDbStorage implements RatingStorage {
+public class RatingDbStorage extends AbstractDbStorage<Rating> implements RatingStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired

@@ -30,7 +30,6 @@ public class Film {
     @Positive(message = "Duration of the film can not be negative or zero")
     private int duration;
     private Rating mpa;
-    @Setter(AccessLevel.NONE)
     private Set<Genre> genres = new HashSet<>();
 
     @Setter(AccessLevel.NONE)

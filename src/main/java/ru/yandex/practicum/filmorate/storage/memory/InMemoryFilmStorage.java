@@ -1,17 +1,20 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.memory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.memory.interfaces.FilmStorage;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implements FilmStorage {
+
+    final Map<Integer, Film> storage = new HashMap<>();
     private int id = 1;
 
     @Override

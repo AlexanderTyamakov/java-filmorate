@@ -21,4 +21,8 @@ public class Genre {
     public Genre() {
         this.name = "";
     }
+
+    public Integer getId() {
+        return id;
+    }
 }
