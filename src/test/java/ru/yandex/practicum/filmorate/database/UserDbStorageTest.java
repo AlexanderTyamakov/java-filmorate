@@ -8,21 +8,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.database.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.UserDStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserDbStorageTest {
-    private final UserDbStorage userStorage;
+    private final UserDStorage userStorage;
     private static final String EMAIL1 = "user1@ya.ru";
     private static final String EMAIL2 = "user2@ya.ru";
 
@@ -71,23 +71,77 @@ class UserDbStorageTest {
         assertEquals(2, actUsers.size());
     }
 
-//    @Test
-//    void delete(){}
-//
-//    @Test
-//    void insertFriendship(){}
-//
-//    @Test
-//    void removeFriendship(){}
-//
-//    @Test
-//    void updateFriendship(){}
-//
-//    @Test
-//    void containsFriendship(){}
-//
-//    @Test
-//    void loadFriends(){}
+    @Test
+    void delete(){
+        User user = getExpUser1();
+        userStorage.add(user);
+        userStorage.delete(user);
+        Collection <User> expected  = new ArrayList<>();
+        assertEquals(expected,userStorage.getValues());
+    }
+
+    @Test
+    void insertFriendship(){
+        User user1 = getExpUser1();
+        userStorage.add(user1);
+        User user2 = getExpUser2();
+        userStorage.add(user2);
+        userStorage.insertFriendship(user1.getId(),user2.getId());
+        userStorage.loadFriends(user1);
+        assertTrue(user1.getFriends().contains(user2.getId()));
+    }
+
+    @Test
+    void removeFriendship(){
+        User user1 = getExpUser1();
+        userStorage.add(user1);
+        User user2 = getExpUser2();
+        userStorage.add(user2);
+        userStorage.insertFriendship(user1.getId(),user2.getId());
+        userStorage.removeFriendship(user1.getId(),user2.getId());
+        userStorage.loadFriends(user1);
+        assertFalse(user1.getFriends().contains(user2.getId()));
+    }
+
+    @Test
+    void updateFriendship(){
+        User user1 = getExpUser1();
+        userStorage.add(user1);
+        User user2 = getExpUser2();
+        userStorage.add(user2);
+        userStorage.insertFriendship(user1.getId(),user2.getId());
+        userStorage.updateFriendship(user1.getId(),user2.getId(),true, user1.getId(),user2.getId());
+        userStorage.loadFriends(user1);
+        userStorage.loadFriends(user2);
+        System.out.println(user1);
+        System.out.println(user2);
+        assertTrue(user1.getFriends().contains(user2.getId()));
+        assertTrue(user2.getFriends().contains(user1.getId()));
+    }
+
+    @Test
+    void containsFriendship(){
+        User user1 = getExpUser1();
+        userStorage.add(user1);
+        User user2 = getExpUser2();
+        userStorage.add(user2);
+        userStorage.insertFriendship(user1.getId(),user2.getId());
+        assertFalse(userStorage.containsFriendship(user1.getId(),user2.getId(),true));
+        userStorage.updateFriendship(user1.getId(),user2.getId(),true, user1.getId(),user2.getId());
+        assertTrue(userStorage.containsFriendship(user1.getId(),user2.getId(),true));
+    }
+
+    @Test
+    void loadFriends(){
+        User user1 = getExpUser1();
+        userStorage.add(user1);
+        User user2 = getExpUser2();
+        userStorage.add(user2);
+        userStorage.insertFriendship(user1.getId(),user2.getId());
+        assertFalse(user1.getFriends().contains(user2.getId()));
+        userStorage.loadFriends(user1);
+        assertTrue(user1.getFriends().contains(user2.getId()));
+    }
 
     private User getExpUser1() {
         User user = new User();

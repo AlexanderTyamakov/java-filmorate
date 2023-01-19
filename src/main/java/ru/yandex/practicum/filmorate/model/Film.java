@@ -1,10 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,7 +27,7 @@ public class Film {
     @Positive(message = "Duration of the film can not be negative or zero")
     private int duration;
     private Rating mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres = new TreeSet<>(Comparator.comparing(Genre::getId));
 
     @Setter(AccessLevel.NONE)
     private Set<Integer> usersLikes = new HashSet<>();
@@ -55,17 +52,7 @@ public class Film {
         return Integer.compare(g0.getId(), g1.getId());
     }
 
-    @Override
-    public String toString() {
-        return "Film{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", releaseDate=" + releaseDate +
-                ", duration=" + duration +
-                ", mpa=" + mpa +
-                ", genres=" + genres.stream().sorted(this::compare).collect(Collectors.toList()) +
-                ", usersLikes=" + usersLikes +
-                '}';
+    public Integer getId() {
+        return id;
     }
 }

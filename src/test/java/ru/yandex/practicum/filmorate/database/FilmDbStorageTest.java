@@ -9,7 +9,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.database.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.FilmDStorage;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.UserDStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class FilmDbStorageTest {
-    private final FilmDbStorage filmStorage;
+    private final FilmDStorage filmStorage;
+    private final UserDStorage userStorage;
 
     @Test
     void add() {
@@ -72,15 +76,29 @@ class FilmDbStorageTest {
         assertEquals(2, actFilms.size());
     }
 
-//    @Test
-//    void delete(){}
-//
-//    @Test
-//    void saveLikes() {}
-//
-//    @Test
-//    void loadLikes() {}
+    @Test
+    void delete(){
+        Film film1 = getExpFilm1();
+        filmStorage.add(film1);
+        filmStorage.delete(film1);
+        Collection <Film> expected = new ArrayList<>();
+        assertEquals(expected,filmStorage.getValues());
+    }
 
+    @Test
+    void saveLikesAndLoadLikes() {
+        userStorage.add(getExpUser1());
+        Film film1 = getExpFilm1();
+        filmStorage.add(film1);
+        film1.setId(1);
+        film1.addUserLike(1);
+
+        filmStorage.saveLikes(film1);
+        Film film2 = getExpFilm2();
+        film2.setId(1);
+        filmStorage.loadLikes(film2);
+        assertEquals(film1.getUsersLikes(),film2.getUsersLikes());
+    }
 
     private Film getExpFilm1() {
         Film film = new Film();
@@ -113,5 +131,14 @@ class FilmDbStorageTest {
         rating.setId(2);
         film.setMpa(rating);
         return film;
+    }
+
+    private User getExpUser1() {
+        User user = new User();
+        user.setEmail("EMAIL1@EMAIL.COM");
+        user.setLogin("usr1");
+        user.setName("User1");
+        user.setBirthday(LocalDate.of(1987, 10, 1));
+        return user;
     }
 }

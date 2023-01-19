@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.database.RatingDbStorage;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.RatingStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class RatingDbStorageTest {
-    private final RatingDbStorage gatingStorage;
+    private final RatingStorage gatingStorage;
     private int countRec;   //Так как в таблице уже есть начальные данные
 
     @BeforeEach

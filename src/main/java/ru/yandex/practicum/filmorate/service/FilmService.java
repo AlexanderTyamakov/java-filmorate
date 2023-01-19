@@ -39,7 +39,7 @@ public class FilmService {
         filmStorage.saveLikes(film);
         genreStorage.saveGenre(film);
         log.info("Фильм добавлен в коллекцию");
-        return film;
+        return getById(film.getId());
     }
 
     public Film update(Film film) {
@@ -53,7 +53,7 @@ public class FilmService {
             log.error("Фильм в коллекции не найден");
             throw new FilmNotFoundException("Ошибка при обновлении: фильм id = " + film.getId() + " не найден");
         }
-        return film;
+        return getById(film.getId());
     }
 
     public Collection<Film> findAll() {
