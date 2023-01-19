@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
@@ -23,7 +24,7 @@ public class GenreContoller {
     private final GenreService genreService;
 
     @Autowired
-    public GenreContoller (GenreService genreService) {
+    public GenreContoller (@Qualifier("GenreService")GenreService genreService) {
         this.genreService = genreService;
     }
 

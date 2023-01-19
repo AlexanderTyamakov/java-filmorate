@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("FilmService")
 public class FilmService {
     private final FilmDStorage filmStorage;
     private final UserStorage userStorage;
@@ -28,7 +28,7 @@ public class FilmService {
     @Autowired
     public FilmService(@Qualifier("FilmDbStorage") FilmDStorage filmStorage,
                        @Qualifier("UserDbStorage") UserStorage userStorage,
-                       GenreStorage genreStorage) {
+                       @Qualifier("GenreDbStorage") GenreStorage genreStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreStorage = genreStorage;

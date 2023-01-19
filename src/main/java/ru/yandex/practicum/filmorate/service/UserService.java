@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("UserService")
 public class UserService {
     private final UserDStorage userStorage;
 
