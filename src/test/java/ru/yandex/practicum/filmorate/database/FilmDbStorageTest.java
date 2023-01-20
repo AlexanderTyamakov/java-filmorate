@@ -11,15 +11,11 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.database.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.database.interfaces.FilmDStorage;
 import ru.yandex.practicum.filmorate.storage.database.interfaces.UserDStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,7 +89,6 @@ class FilmDbStorageTest {
         filmStorage.add(film1);
         film1.setId(1);
         film1.addUserLike(1);
-
         filmStorage.saveLikes(film1);
         Film film2 = getExpFilm2();
         film2.setId(1);

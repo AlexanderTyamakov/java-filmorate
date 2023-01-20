@@ -41,7 +41,7 @@ public class UserService {
             log.error("Пользователь в коллекции не найден");
             throw new UserNotFoundException("Ошибка при обновлении: пользователь c id = " + user.getId() + " не найден");
         }
-        return user;
+        return userStorage.getById(user.getId());
     }
 
     public Collection<User> findAll() {
