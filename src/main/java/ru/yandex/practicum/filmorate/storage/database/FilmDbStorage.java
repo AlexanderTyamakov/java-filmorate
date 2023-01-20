@@ -88,25 +88,4 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmDStora
                         "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID ORDER BY f.FILM_ID";
         return jdbcTemplate.query(sql, this::mapToFilm);
     }
-
-    @Override
-    public void saveLikes(Film film) {
-        jdbcTemplate.update("DELETE FROM FILMS_LIKES WHERE FILM_ID = ?", film.getId());
-
-        String sql = "INSERT INTO FILMS_LIKES (FILM_ID, USER_ID) VALUES(?, ?)";
-        Set<Integer> likes = film.getUsersLikes();
-        for (var like : likes) {
-            jdbcTemplate.update(sql, film.getId(), like);
-        }
-    }
-
-    @Override
-    public void loadLikes(Film film) {
-        String sql = "SELECT USER_ID FROM FILMS_LIKES WHERE FILM_ID = ?";
-        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
-        film.clearLikes();
-        while (sqlRowSet.next()) {
-            film.addUserLike(sqlRowSet.getInt("USER_ID"));
-        }
-    }
 }

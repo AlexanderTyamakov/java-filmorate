@@ -12,11 +12,12 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.database.interfaces.FilmDStorage;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.database.interfaces.UserDStorage;
 
 import java.time.LocalDate;
-import java.util.*;
-
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,62 +25,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class FilmDbStorageTest {
+class LikeDbStorageTest {
     private final FilmDStorage filmStorage;
     private final UserDStorage userStorage;
+    private final LikeStorage likeStorage;
 
     @Test
-    void add() {
-        Film expFilm = getExpFilm1();
-        filmStorage.add(expFilm);
-        Film actFilm = filmStorage.getById(expFilm.getId());
-        assertEquals(expFilm.getId(),actFilm.getId());
-        assertEquals(expFilm.getName(),actFilm.getName());
-        assertEquals(expFilm.getDescription(),actFilm.getDescription());
-        assertEquals(expFilm.getReleaseDate(),actFilm.getReleaseDate());
-        assertEquals(expFilm.getDuration(),actFilm.getDuration());
-        assertEquals(expFilm.getMpa().getId(),actFilm.getMpa().getId());
-    }
-
-    @Test
-    void replace() {
-        Film expFilm = getExpFilm1();
-        filmStorage.add(expFilm);
-        expFilm.setName("Super Film");
-
-        filmStorage.replace(expFilm);
-        Film actFilm = filmStorage.getById(expFilm.getId());
-
-        assertEquals(expFilm.getId(), actFilm.getId());
-        assertEquals(expFilm.getName(), actFilm.getName());
-    }
-
-    @Test
-    void getById() {
-        Film expFilm = getExpFilm1();
-        filmStorage.add(expFilm);
-        Film actFilm = filmStorage.getById(expFilm.getId());
-        assertEquals(expFilm.getId(), actFilm.getId());
-        assertEquals(expFilm.getName(), actFilm.getName());
-    }
-
-    @Test
-    void getValues() {
-        Film expFilm1 = getExpFilm1();
-        filmStorage.add(expFilm1);
-        Film expFilm2 = getExpFilm2();
-        filmStorage.add(expFilm2);
-        Collection<Film> actFilms = (filmStorage.getValues());
-        assertEquals(2, actFilms.size());
-    }
-
-    @Test
-    void delete(){
+    void saveLikes() {
+        userStorage.add(getExpUser1());
         Film film1 = getExpFilm1();
         filmStorage.add(film1);
-        filmStorage.delete(film1);
-        Collection <Film> expected = new ArrayList<>();
-        assertEquals(expected,filmStorage.getValues());
+        film1.addUserLike(1);
+        likeStorage.saveLikes(film1);
+        Film film2 = getExpFilm2();
+        film2.setId(1);
+        likeStorage.loadLikes(film2);
+        assertEquals(film1.getUsersLikes(),film2.getUsersLikes());
+    }
+
+    @Test
+    void loadLikes() {
+        userStorage.add(getExpUser1());
+        Film film1 = getExpFilm1();
+        filmStorage.add(film1);
+        Film film2 = getExpFilm2();
+        film2.addUserLike(1);
+        film2.setId(1);
+        likeStorage.loadLikes(film2);
+        assertEquals(new HashSet<>(),film2.getUsersLikes());
     }
 
     private Film getExpFilm1() {
@@ -113,5 +86,14 @@ class FilmDbStorageTest {
         rating.setId(2);
         film.setMpa(rating);
         return film;
+    }
+
+    private User getExpUser1() {
+        User user = new User();
+        user.setEmail("EMAIL1@EMAIL.COM");
+        user.setLogin("usr1");
+        user.setName("User1");
+        user.setBirthday(LocalDate.of(1987, 10, 1));
+        return user;
     }
 }

@@ -5,7 +5,4 @@ import ru.yandex.practicum.filmorate.storage.memory.interfaces.FilmStorage;
 
 public interface FilmDStorage extends FilmStorage {
 
-    void saveLikes(Film film);
-
-    void loadLikes(Film film);
 }

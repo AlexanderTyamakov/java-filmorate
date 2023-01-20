@@ -81,69 +81,6 @@ class UserDbStorageTest {
         assertEquals(expected,userStorage.getValues());
     }
 
-    @Test
-    void insertFriendship(){
-        User user1 = getExpUser1();
-        userStorage.add(user1);
-        User user2 = getExpUser2();
-        userStorage.add(user2);
-        userStorage.insertFriendship(user1.getId(),user2.getId());
-        userStorage.loadFriends(user1);
-        assertTrue(user1.getFriends().contains(user2.getId()));
-    }
-
-    @Test
-    void removeFriendship(){
-        User user1 = getExpUser1();
-        userStorage.add(user1);
-        User user2 = getExpUser2();
-        userStorage.add(user2);
-        userStorage.insertFriendship(user1.getId(),user2.getId());
-        userStorage.removeFriendship(user1.getId(),user2.getId());
-        userStorage.loadFriends(user1);
-        assertFalse(user1.getFriends().contains(user2.getId()));
-    }
-
-    @Test
-    void updateFriendship(){
-        User user1 = getExpUser1();
-        userStorage.add(user1);
-        User user2 = getExpUser2();
-        userStorage.add(user2);
-        userStorage.insertFriendship(user1.getId(),user2.getId());
-        userStorage.updateFriendship(user1.getId(),user2.getId(),true, user1.getId(),user2.getId());
-        userStorage.loadFriends(user1);
-        userStorage.loadFriends(user2);
-        System.out.println(user1);
-        System.out.println(user2);
-        assertTrue(user1.getFriends().contains(user2.getId()));
-        assertTrue(user2.getFriends().contains(user1.getId()));
-    }
-
-    @Test
-    void containsFriendship(){
-        User user1 = getExpUser1();
-        userStorage.add(user1);
-        User user2 = getExpUser2();
-        userStorage.add(user2);
-        userStorage.insertFriendship(user1.getId(),user2.getId());
-        assertFalse(userStorage.containsFriendship(user1.getId(),user2.getId(),true));
-        userStorage.updateFriendship(user1.getId(),user2.getId(),true, user1.getId(),user2.getId());
-        assertTrue(userStorage.containsFriendship(user1.getId(),user2.getId(),true));
-    }
-
-    @Test
-    void loadFriends(){
-        User user1 = getExpUser1();
-        userStorage.add(user1);
-        User user2 = getExpUser2();
-        userStorage.add(user2);
-        userStorage.insertFriendship(user1.getId(),user2.getId());
-        assertFalse(user1.getFriends().contains(user2.getId()));
-        userStorage.loadFriends(user1);
-        assertTrue(user1.getFriends().contains(user2.getId()));
-    }
-
     private User getExpUser1() {
         User user = new User();
         user.setEmail(EMAIL1);

@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.database.interfaces.FilmDStorage;
 import ru.yandex.practicum.filmorate.storage.database.interfaces.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.memory.interfaces.UserStorage;
 
 import java.time.LocalDate;
@@ -24,21 +25,23 @@ public class FilmService {
     private final FilmDStorage filmStorage;
     private final UserStorage userStorage;
     private final GenreStorage genreStorage;
-
+    private final LikeStorage likeStorage;
 
     @Autowired
     public FilmService(@Qualifier("FilmDbStorage") FilmDStorage filmStorage,
                        @Qualifier("UserDbStorage") UserStorage userStorage,
-                       @Qualifier("GenreDbStorage") GenreStorage genreStorage) {
+                       @Qualifier("GenreDbStorage") GenreStorage genreStorage,
+                       @Qualifier("LikeDbStorage") LikeStorage likeStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreStorage = genreStorage;
+        this.likeStorage = likeStorage;
     }
 
     public Film create(Film film) {
         validate(film);
         filmStorage.add(film);
-        filmStorage.saveLikes(film);
+        likeStorage.saveLikes(film);
         genreStorage.saveGenre(film);
         log.info("Фильм добавлен в коллекцию");
         return getById(film.getId());
@@ -48,7 +51,7 @@ public class FilmService {
         validate(film);
         if (getIds().contains(film.getId())) {
             filmStorage.replace(film);
-            filmStorage.saveLikes(film);
+            likeStorage.saveLikes(film);
             genreStorage.saveGenre(film);
             log.info("Фильм обновлен в коллекции");
         } else {
@@ -80,7 +83,7 @@ public class FilmService {
             if (getUsersIds().contains(userId)) {
                 Film film = filmStorage.getById(filmId);
                 film.addUserLike(userId);
-                filmStorage.saveLikes(film);
+                likeStorage.saveLikes(film);
                 return film;
             } else {
                 log.error("Пользователь в коллекции не найден");
@@ -97,7 +100,7 @@ public class FilmService {
             if (getUsersIds().contains(userId)) {
                 Film film = filmStorage.getById(filmId);
                 film.deleteUserLike(userId);
-                filmStorage.saveLikes(film);
+                likeStorage.saveLikes(film);
                 return film;
             } else {
                 log.error("Пользователь в коллекции не найден");
@@ -145,7 +148,7 @@ public class FilmService {
     }
 
     private void loadData(Film film) {
-        filmStorage.loadLikes(film);
+        likeStorage.loadLikes(film);
         genreStorage.loadGenre(film);
     }
 }

@@ -11,9 +11,8 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.database.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.database.GenreDbStorage;
-import ru.yandex.practicum.filmorate.storage.database.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.database.*;
+import ru.yandex.practicum.filmorate.storage.database.interfaces.FriendStorage;
 
 import java.time.LocalDate;
 
@@ -25,9 +24,12 @@ class ValidationTests {
     private JdbcTemplate jdbcTemplate;
     private static final String LOGIN = "dolore ullamco";
 
-    UserService userService = new UserService(new UserDbStorage(jdbcTemplate ) {
-    });
-    FilmService filmService = new FilmService(new FilmDbStorage(jdbcTemplate),new UserDbStorage(jdbcTemplate),new GenreDbStorage(jdbcTemplate));
+    UserService userService = new UserService(new UserDbStorage(jdbcTemplate),
+            new FriendDbStorage(jdbcTemplate));
+    FilmService filmService = new FilmService(new FilmDbStorage(jdbcTemplate),
+            new UserDbStorage(jdbcTemplate),
+            new GenreDbStorage(jdbcTemplate),
+            new LikeDbStorage(jdbcTemplate));
 
     @Test
     void contextLoads() {
