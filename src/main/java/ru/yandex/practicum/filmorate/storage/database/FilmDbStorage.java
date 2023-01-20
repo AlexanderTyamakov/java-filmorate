@@ -104,6 +104,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmDStora
     public void loadLikes(Film film) {
         String sql = "SELECT USER_ID FROM FILMS_LIKES WHERE FILM_ID = ?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
+        film.clearLikes();
         while (sqlRowSet.next()) {
             film.addUserLike(sqlRowSet.getInt("USER_ID"));
         }

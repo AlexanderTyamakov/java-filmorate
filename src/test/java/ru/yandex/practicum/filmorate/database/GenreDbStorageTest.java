@@ -89,7 +89,7 @@ class GenreDbStorageTest {
         assertEquals(countRec, actGenres.size());
     }
     @Test
-    void saveGenreAndLoadGenre(){
+    void saveGenre(){
         Film film1 = getExpFilm1();
         filmStorage.add(film1);
         genreStorage.saveGenre(film1);
@@ -99,6 +99,16 @@ class GenreDbStorageTest {
         Set<Genre> genres = film2.getGenres();
         assertTrue(genres.contains(new Genre(1,"Комедия")));
         assertTrue(genres.contains(new Genre(2,"Драма")));
+    }
+
+    @Test
+    void loadGenre(){
+        Film film2 = getExpFilm2();
+        filmStorage.add(film2);
+        Film film1 = getExpFilm1();
+        film1.setId(1);
+        genreStorage.loadGenre(film2);
+        assertEquals(new HashSet<>(),film2.getGenres());
     }
 
     @Test

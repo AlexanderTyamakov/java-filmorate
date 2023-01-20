@@ -39,7 +39,10 @@ public class Film {
         genres.add(genre);
     }
     public void clearGenre() {
-        genres.clear();
+        genres = new TreeSet<>(Comparator.comparing(Genre::getId));
+    }
+    public void clearLikes() {
+        usersLikes.clear();
     }
     public void deleteUserLike(int userId) {
         usersLikes.remove(userId);

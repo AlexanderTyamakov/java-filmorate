@@ -83,17 +83,28 @@ class FilmDbStorageTest {
     }
 
     @Test
-    void saveLikesAndLoadLikes() {
+    void saveLikes() {
         userStorage.add(getExpUser1());
         Film film1 = getExpFilm1();
         filmStorage.add(film1);
-        film1.setId(1);
         film1.addUserLike(1);
         filmStorage.saveLikes(film1);
         Film film2 = getExpFilm2();
         film2.setId(1);
         filmStorage.loadLikes(film2);
         assertEquals(film1.getUsersLikes(),film2.getUsersLikes());
+    }
+
+    @Test
+    void loadLikes() {
+        userStorage.add(getExpUser1());
+        Film film1 = getExpFilm1();
+        filmStorage.add(film1);
+        Film film2 = getExpFilm2();
+        film2.addUserLike(1);
+        film2.setId(1);
+        filmStorage.loadLikes(film2);
+        assertEquals(new HashSet<>(),film2.getUsersLikes());
     }
 
     private Film getExpFilm1() {

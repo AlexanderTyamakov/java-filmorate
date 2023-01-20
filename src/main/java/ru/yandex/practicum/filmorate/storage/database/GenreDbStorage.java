@@ -77,6 +77,7 @@ public class GenreDbStorage extends AbstractDbStorage<Genre> implements GenreSto
         String sql = "SELECT g.GENRE_ID, g.NAME FROM FILMS_GENRES fg JOIN GENRES g ON fg.GENRE_ID = g.GENRE_ID " +
                 " WHERE fg.FILM_ID = ?";
         Collection<Genre> genres =  jdbcTemplate.query(sql, this::mapToGenre, film.getId());
+        film.clearGenre();
         for (Genre genre:genres) {
             film.addGenre(genre);
         }
