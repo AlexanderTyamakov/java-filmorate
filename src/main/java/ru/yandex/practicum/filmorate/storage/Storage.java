@@ -10,7 +10,7 @@ public interface Storage<T> {
 
     T delete(T obj);
 
-    T getById(int id);
+    T getById(Integer id);
 
     Collection<T> getValues();
 }

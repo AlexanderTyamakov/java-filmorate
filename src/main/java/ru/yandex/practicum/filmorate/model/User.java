@@ -1,34 +1,41 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.validation.constraints.*;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
 public class User {
 
     private int id;
     @NotNull(message = "Email can not be null")
     @NotBlank(message = "Email can not be blank")
     @Email(message = "Email is not valid")
-    private final String email;
+    private String email;
     @NotNull(message = "Login can not be null")
     @NotBlank(message = "Login can not be blank")
-    private final String login;
+    private String login;
     private String name;
     @PastOrPresent(message = "Birthday can not be in the future")
-    private final LocalDate birthday;
-    @JsonIgnore
-    private Set<Integer> friends;
+    private LocalDate birthday;
+    @Setter(AccessLevel.NONE)
+    private Set<Integer> friends = new HashSet<>();
 
     public void addFriends(int id) {
-        this.friends.add(id);
+        friends.add(id);
     }
     public void deleteFriends(int id) {
         this.friends.remove(id);
+    }
+
+    public boolean containsFriend(Integer id){
+        return friends.contains(id);
     }
 }
